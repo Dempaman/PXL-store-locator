@@ -1,48 +1,63 @@
-"use client";
+"use client"
 
-import { Zap } from "lucide-react";
+import { Zap } from "lucide-react"
+import { ThemeToggle } from "@/components/store-locator/theme-toggle"
 
 export function Header() {
   return (
-    <header className="bg-black border-b border-[#f5db00]/20 sticky top-0 z-50">
+    <header className="sticky top-0 z-50 border-b border-pxl-yellow/20 bg-background/92 shadow-[0_6px_24px_rgba(245,219,0,0.06)] backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-colors duration-200 dark:border-pxl-yellow/30 dark:shadow-[0_4px_30px_rgba(245,219,0,0.07)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex h-16 items-center justify-between gap-4 sm:h-20">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <div className="relative">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#f5db00] rounded-lg flex items-center justify-center">
-                  <span className="text-black font-black text-xl sm:text-2xl tracking-tighter">PXL</span>
-                  <span className="text-black font-bold text-lg sm:text-xl absolute -right-1 -top-1">.</span>
+                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-pxl-yellow sm:h-12 sm:w-12">
+                  <span className="text-black font-black text-xl sm:text-2xl tracking-tighter">
+                    PXL
+                  </span>
+                  <span className="text-black font-bold text-lg sm:text-xl absolute -right-1 -top-1">
+                    .
+                  </span>
                 </div>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-white font-bold text-xl tracking-wide">PXL Energy</h1>
-                <p className="text-[#f5db00] text-xs font-medium -mt-1">This is your power-up!</p>
+                <h1 className="text-xl font-bold tracking-wide text-foreground">
+                  PXL Energy
+                </h1>
+                <p className="-mt-1 text-xs font-medium text-pxl-yellow">
+                  This is your power-up!
+                </p>
               </div>
             </div>
           </div>
 
           {/* Title */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-[#f5db00] fill-[#f5db00]" />
-            <h2 className="text-white font-semibold text-lg sm:text-xl">Butikssökare</h2>
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <Zap className="h-5 w-5 fill-pxl-yellow text-pxl-yellow sm:h-6 sm:w-6" />
+            <h2 className="truncate text-lg font-semibold text-foreground sm:text-xl">
+              Butikssökare
+            </h2>
           </div>
 
-          {/* Stats */}
-          <div className="hidden md:flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-[#f5db00] font-bold text-lg">50+</p>
-              <p className="text-gray-400 text-xs">Butiker</p>
-            </div>
-            <div className="w-px h-8 bg-gray-700" />
-            <div className="text-right">
-              <p className="text-[#f5db00] font-bold text-lg">21</p>
-              <p className="text-gray-400 text-xs">Regioner</p>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+
+            {/* Stats */}
+            <div className="hidden md:flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-lg font-bold text-pxl-yellow">50+</p>
+                <p className="text-xs text-muted-foreground">Butiker</p>
+              </div>
+              <div className="h-8 w-px bg-border" />
+              <div className="text-right">
+                <p className="text-lg font-bold text-pxl-yellow">21</p>
+                <p className="text-xs text-muted-foreground">Regioner</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </header>
-  );
+  )
 }

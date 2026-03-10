@@ -1,153 +1,79 @@
-# 🚀 Welcome to Z.ai Code Scaffold
+# PXL Store Locator
 
-A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development with [Z.ai](https://chat.z.ai)'s AI-powered coding assistance.
+Store locator for PXL Energy built with Next.js. The app fetches stores from a Google My Maps KML source, renders them in a searchable/filterable list, and shows selected stores on a Google Map.
 
-## ✨ Technology Stack
+## What This Project Does
 
-This scaffold provides a robust foundation built with:
+- Fetches store data from a KML endpoint (`/api/stores`)
+- Supports search, region/store-type filters, and sort by distance
+- Integrates geolocation for "nearest store" behavior
+- Shows selected store details in a custom map overlay
+- Supports dark/light mode (system by default + manual toggle)
 
-### 🎯 Core Framework
+## Tech Stack
 
-- **⚡ Next.js 16** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
+- Next.js 16 (App Router)
+- React 19 + TypeScript 5
+- Tailwind CSS 4
+- shadcn/ui + Radix UI primitives
+- Google Maps JavaScript API
 
-### 🧩 UI Components & Styling
-
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
-- **🌈 Framer Motion** - Production-ready motion library for React
-- **🎨 Next Themes** - Perfect dark mode in 2 lines of code
-
-### 📋 Forms & Validation
-
-- **🎣 React Hook Form** - Performant forms with easy validation
-- **✅ Zod** - TypeScript-first schema validation
-
-### 🔄 State Management & Data Fetching
-
-- **🐻 Zustand** - Simple, scalable state management
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🌐 Fetch** - Promise-based HTTP request
-
-### 🗄️ Database & Backend
-
-- **🗄️ Prisma** - Next-generation TypeScript ORM
-- **🔐 NextAuth.js** - Complete open-source authentication solution
-
-### 🎨 Advanced UI Features
-
-- **📊 TanStack Table** - Headless UI for building tables and datagrids
-- **🖱️ DND Kit** - Modern drag and drop toolkit for React
-- **📊 Recharts** - Redefined chart library built with React and D3
-- **🖼️ Sharp** - High performance image processing
-
-### 🌍 Internationalization & Utilities
-
-- **🌍 Next Intl** - Internationalization library for Next.js
-- **📅 Date-fns** - Modern JavaScript date utility library
-- **🪝 ReactUse** - Collection of essential React hooks for modern development
-
-## 🎯 Why This Scaffold?
-
-- **🏎️ Fast Development** - Pre-configured tooling and best practices
-- **🎨 Beautiful UI** - Complete shadcn/ui component library with advanced interactions
-- **🔒 Type Safety** - Full TypeScript configuration with Zod validation
-- **📱 Responsive** - Mobile-first design principles with smooth animations
-- **🗄️ Database Ready** - Prisma ORM configured for rapid backend development
-- **🔐 Auth Included** - NextAuth.js for secure authentication flows
-- **📊 Data Visualization** - Charts, tables, and drag-and-drop functionality
-- **🌍 i18n Ready** - Multi-language support with Next Intl
-- **🚀 Production Ready** - Optimized build and deployment settings
-- **🤖 AI-Friendly** - Structured codebase perfect for AI assistance
-
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see your application running.
+Open `http://localhost:3000`.
 
-## 🤖 Powered by Z.ai
+## Environment Variables
 
-This scaffold is optimized for use with [Z.ai](https://chat.z.ai) - your AI assistant for:
+Create a `.env.local` file in the project root:
 
-- **💻 Code Generation** - Generate components, pages, and features instantly
-- **🎨 UI Development** - Create beautiful interfaces with AI assistance
-- **🔧 Bug Fixing** - Identify and resolve issues with intelligent suggestions
-- **📝 Documentation** - Auto-generate comprehensive documentation
-- **🚀 Optimization** - Performance improvements and best practices
+```bash
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 
-Ready to build something amazing? Start chatting with Z.ai at [chat.z.ai](https://chat.z.ai) and experience the future of AI-powered development!
-
-## 📁 Project Structure
-
+# Optional: override default Google My Maps KML source
+PXL_STORES_KML_URL=https://www.google.com/maps/d/kml?mid=YOUR_MAP_ID
 ```
+
+## Data Source and Sync Behavior
+
+The API route `src/app/api/stores/route.ts` calls `fetchStoresFromKml()` from `src/lib/store-kml.ts`.
+
+- Default KML source:
+  - `https://www.google.com/maps/d/kml?mid=1gEpdbhTyIMNYDUCbOuFPqPevXZcIjZs`
+- Revalidation/cache interval:
+  - `1800` seconds (30 minutes)
+
+This means updates in Google My Maps are reflected here after cache revalidation, not always instantly.
+
+If KML fetch/parsing fails, the API responds with an error (`502`) and no static fallback dataset.
+
+## Scripts
+
+```bash
+npm run dev          # Start dev server on :3000
+npm run build        # Build Next.js + prepare standalone output
+npm run start        # Run standalone production server
+npm run lint         # Run ESLint
+```
+
+## Project Structure
+
+```text
 src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions and configurations
+	app/
+		page.tsx                    # Main locator UI and state
+		api/stores/route.ts         # Store API (KML only)
+	components/store-locator/     # Locator UI components
+	lib/store-kml.ts              # KML fetch + parse logic
+	types/store.ts                # Store/filter/location types
 ```
 
-## 🎨 Available Features & Components
+## Notes
 
-This scaffold includes a comprehensive set of modern web development tools:
-
-### 🧩 UI Components (shadcn/ui)
-
-- **Layout**: Card, Separator, Aspect Ratio, Resizable Panels
-- **Forms**: Input, Textarea, Select, Checkbox, Radio Group, Switch
-- **Feedback**: Alert, Toast (Sonner), Progress, Skeleton
-- **Navigation**: Breadcrumb, Menubar, Navigation Menu, Pagination
-- **Overlay**: Dialog, Sheet, Popover, Tooltip, Hover Card
-- **Data Display**: Badge, Avatar, Calendar
-
-### 📊 Advanced Data Features
-
-- **Tables**: Powerful data tables with sorting, filtering, pagination (TanStack Table)
-- **Charts**: Beautiful visualizations with Recharts
-- **Forms**: Type-safe forms with React Hook Form + Zod validation
-
-### 🎨 Interactive Features
-
-- **Animations**: Smooth micro-interactions with Framer Motion
-- **Drag & Drop**: Modern drag-and-drop functionality with DND Kit
-- **Theme Switching**: Built-in dark/light mode support
-
-### 🔐 Backend Integration
-
-- **Authentication**: Ready-to-use auth flows with NextAuth.js
-- **Database**: Type-safe database operations with Prisma
-- **API Client**: HTTP requests with Fetch + TanStack Query
-- **State Management**: Simple and scalable with Zustand
-
-### 🌍 Production Features
-
-- **Internationalization**: Multi-language support with Next Intl
-- **Image Optimization**: Automatic image processing with Sharp
-- **Type Safety**: End-to-end TypeScript with Zod validation
-- **Essential Hooks**: 100+ useful React hooks with ReactUse for common patterns
-
-## 🤝 Get Started with Z.ai
-
-1. **Clone this scaffold** to jumpstart your project
-2. **Visit [chat.z.ai](https://chat.z.ai)** to access your AI coding assistant
-3. **Start building** with intelligent code generation and assistance
-4. **Deploy with confidence** using the production-ready setup
-
----
-
-Built with ❤️ for the developer community. Supercharged by [Z.ai](https://chat.z.ai) 🚀
+- The map requires a valid Google Maps API key and proper referrer restrictions.
+- Current marker implementation uses `google.maps.Marker` (deprecated by Google but still functional).
+- README is intentionally scoped to this project, not the original scaffold template.

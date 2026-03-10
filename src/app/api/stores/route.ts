@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { stores as fallbackStores } from "@/data/stores"
 import { fetchStoresFromKml } from "@/lib/store-kml"
 
 export const revalidate = 1800
@@ -23,12 +22,10 @@ export async function GET() {
 
     return NextResponse.json(
       {
-        stores: fallbackStores,
-        source: "fallback",
         error: message,
       },
       {
-        status: 200,
+        status: 502,
       },
     )
   }

@@ -6,13 +6,19 @@ import { SearchBar } from "@/components/store-locator/search-bar"
 import { FilterPanel } from "@/components/store-locator/filter-panel"
 import { StoreList } from "@/components/store-locator/store-list"
 import { StoreMap } from "@/components/store-locator/store-map"
-import { stores as fallbackStores } from "@/data/stores"
 import { FilterState, Store, UserLocation } from "@/types/store"
 import { Button } from "@/components/ui/button"
-import { Locate, RefreshCw, ChevronDown } from "lucide-react"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import { Locate, RefreshCw, SlidersHorizontal } from "lucide-react"
 
 export default function Home() {
-  const [allStores, setAllStores] = useState<Store[]>(fallbackStores)
+  const [allStores, setAllStores] = useState<Store[]>([])
   const [isLoadingStores, setIsLoadingStores] = useState(true)
   const [storesLoadError, setStoresLoadError] = useState<string | null>(null)
   const [filters, setFilters] = useState<FilterState>({
@@ -25,7 +31,7 @@ export default function Home() {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
   const [isLocating, setIsLocating] = useState(false)
   const [locationError, setLocationError] = useState<string | null>(null)
-  const [showScrollTop, setShowScrollTop] = useState(false)
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
 
   const loadStores = useCallback(async () => {
     try {
@@ -39,7 +45,7 @@ export default function Home() {
 
       const payload = (await response.json()) as {
         stores?: Store[]
-        source?: "kml" | "fallback"
+        source?: "kml"
         error?: string
       }
 
@@ -48,15 +54,9 @@ export default function Home() {
       }
 
       setAllStores(payload.stores)
-      if (payload.source === "fallback") {
-        setStoresLoadError(
-          "Kunde inte hamta externa butiker just nu. Visar lokal fallback-data.",
-        )
-      }
     } catch {
-      setAllStores(fallbackStores)
       setStoresLoadError(
-        "Kunde inte hamta externa butiker just nu. Visar lokal fallback-data.",
+        "Kunde inte hamta butiker fran KML-kallan just nu. Forsok igen senare.",
       )
     } finally {
       setIsLoadingStores(false)
@@ -71,15 +71,6 @@ export default function Home() {
   const refreshStores = useCallback(() => {
     void loadStores()
   }, [loadStores])
-
-  // Handle scroll to top button visibility
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
 
   // Get user location
   const getUserLocation = useCallback(() => {
@@ -224,6 +215,7 @@ export default function Home() {
 
   // Handle store selection
   const handleStoreSelect = useCallback((storeId: string) => {
+    setIsMobileDrawerOpen(false)
     setSelectedStoreId((prev) => (prev === storeId ? null : storeId))
   }, [])
 
@@ -248,92 +240,104 @@ export default function Home() {
     setSelectedStoreId(null)
   }, [])
 
+  const hasActiveFilters =
+    Boolean(filters.search) ||
+    filters.region !== "all" ||
+    filters.storeType !== "all"
+
+  const activeFilterCount =
+    (filters.search ? 1 : 0) +
+    (filters.region !== "all" ? 1 : 0) +
+    (filters.storeType !== "all" ? 1 : 0)
+
+  const controlsBlock = (
+    <>
+      <SearchBar
+        value={filters.search}
+        onChange={(value) => handleFilterChange({ search: value })}
+      />
+      <FilterPanel
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        regions={availableRegions}
+        storeTypes={availableStoreTypes}
+      />
+
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={getUserLocation}
+          disabled={isLocating}
+          className="h-9 flex-1 rounded-md border-border bg-background/70 text-foreground shadow-none hover:border-pxl-yellow hover:bg-pxl-yellow/10 dark:bg-card/70"
+        >
+          {isLocating ? (
+            <>
+              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              Söker plats...
+            </>
+          ) : (
+            <>
+              <Locate className="w-4 h-4 mr-2" />
+              {userLocation ? "Uppdatera min plats" : "Hitta min plats"}
+            </>
+          )}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={refreshStores}
+          disabled={isLoadingStores}
+          className="h-9 rounded-md border-border bg-background/70 text-foreground shadow-none hover:border-pxl-yellow hover:bg-pxl-yellow/10 dark:bg-card/70"
+        >
+          <RefreshCw
+            className={`w-4 h-4 ${isLoadingStores ? "animate-spin" : ""}`}
+          />
+          <span className="ml-2 hidden sm:inline">Uppdatera butiker</span>
+        </Button>
+        {hasActiveFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={resetFilters}
+            className="h-9 rounded-md text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+          >
+            Rensa
+          </Button>
+        )}
+      </div>
+
+      {locationError && (
+        <p className="rounded-md bg-red-500/12 px-3 py-2 text-xs text-red-700 dark:text-red-400">
+          {locationError}
+        </p>
+      )}
+
+      {storesLoadError && (
+        <p className="rounded-md bg-amber-500/12 px-3 py-2 text-xs text-amber-800 dark:text-amber-300">
+          {storesLoadError}
+        </p>
+      )}
+
+      {isLoadingStores && (
+        <p className="text-xs text-muted-foreground">Laddar butiker...</p>
+      )}
+    </>
+  )
+
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground transition-colors duration-200">
       <Header />
 
-      <main className="flex-1 flex flex-col lg:flex-row">
+      <main className="flex-1 min-h-0 flex overflow-hidden">
         {/* Left Panel - Search, Filters, Store List */}
-        <div className="w-full lg:w-[420px] xl:w-[480px] flex flex-col border-r border-gray-800 bg-black/50">
-          {/* Search and Filters */}
-          <div className="p-4 border-b border-gray-800 space-y-4">
-            <SearchBar
-              value={filters.search}
-              onChange={(value) => handleFilterChange({ search: value })}
-            />
-            <FilterPanel
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              regions={availableRegions}
-              storeTypes={availableStoreTypes}
-            />
-
-            {/* Location Button */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={getUserLocation}
-                disabled={isLocating}
-                className="flex-1 h-9 border-gray-700 text-gray-300 hover:text-white hover:border-[#f5db00] hover:bg-[#f5db00]/10"
-              >
-                {isLocating ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                    Söker plats...
-                  </>
-                ) : (
-                  <>
-                    <Locate className="w-4 h-4 mr-2" />
-                    {userLocation ? "Uppdatera min plats" : "Hitta min plats"}
-                  </>
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refreshStores}
-                disabled={isLoadingStores}
-                className="h-9 border-gray-700 text-gray-300 hover:text-white hover:border-[#f5db00] hover:bg-[#f5db00]/10"
-              >
-                <RefreshCw
-                  className={`w-4 h-4 ${isLoadingStores ? "animate-spin" : ""}`}
-                />
-                <span className="ml-2 hidden sm:inline">Uppdatera butiker</span>
-              </Button>
-              {(filters.search ||
-                filters.region !== "all" ||
-                filters.storeType !== "all") && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={resetFilters}
-                  className="h-9 text-gray-400 hover:text-white"
-                >
-                  Rensa
-                </Button>
-              )}
-            </div>
-
-            {locationError && (
-              <p className="text-xs text-red-400 bg-red-500/10 px-3 py-2 rounded-lg">
-                {locationError}
-              </p>
-            )}
-
-            {storesLoadError && (
-              <p className="text-xs text-amber-300 bg-amber-500/10 px-3 py-2 rounded-lg">
-                {storesLoadError}
-              </p>
-            )}
-
-            {isLoadingStores && (
-              <p className="text-xs text-gray-400">Laddar butiker...</p>
-            )}
+        <div className="hidden min-h-0 flex-col border-r border-border bg-card/95 lg:flex lg:w-105 xl:w-120">
+          <div className="h-0.5 shrink-0 bg-linear-to-r from-pxl-yellow/80 via-pxl-yellow/20 to-transparent" />
+          <div className="shrink-0 space-y-4 border-b border-border/80 p-4">
+            {controlsBlock}
           </div>
 
-          {/* Store List */}
-          <div className="flex-1 overflow-hidden p-4">
+          <div className="flex-1 min-h-0 flex flex-col p-4">
             <StoreList
               stores={filteredStores}
               selectedStoreId={selectedStoreId}
@@ -344,30 +348,76 @@ export default function Home() {
         </div>
 
         {/* Right Panel - Map */}
-        <div className="flex-1 h-[50vh] lg:h-auto min-h-[400px] lg:min-h-0">
+        <div className="flex-1 min-h-0 relative">
           <StoreMap
             stores={filteredStores}
             selectedStoreId={selectedStoreId}
             onStoreSelect={handleStoreSelect}
           />
+
+          {/* Mobile drawer trigger */}
+          <div className="lg:hidden absolute top-3 left-3 z-20">
+            <Drawer
+              open={isMobileDrawerOpen}
+              onOpenChange={setIsMobileDrawerOpen}
+            >
+              <DrawerTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 rounded-md border-border bg-background/90 text-foreground shadow-none backdrop-blur hover:border-pxl-yellow hover:bg-pxl-yellow/10 dark:bg-card/90"
+                >
+                  <SlidersHorizontal className="w-4 h-4 mr-2 text-pxl-yellow" />
+                  Filter och lista
+                  {activeFilterCount > 0 && (
+                    <span className="ml-1.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-pxl-yellow px-1 text-[10px] leading-none font-black text-black">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent className="h-[80vh] border-border bg-background text-foreground">
+                <DrawerHeader>
+                  <DrawerTitle>Butikssökare</DrawerTitle>
+                </DrawerHeader>
+
+                <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-4 space-y-4">
+                  <div className="space-y-4 border-b border-border pb-4">
+                    {controlsBlock}
+                  </div>
+
+                  <div className="min-h-75">
+                    <StoreList
+                      stores={filteredStores}
+                      selectedStoreId={selectedStoreId}
+                      onStoreSelect={handleStoreSelect}
+                      userLocation={userLocation}
+                    />
+                  </div>
+                </div>
+              </DrawerContent>
+            </Drawer>
+          </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-black border-t border-gray-800 py-4 px-6">
+      <footer className="border-t border-border bg-background px-6 py-4 transition-colors duration-200 lg:hidden">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
-            <p className="text-gray-400 text-sm">
+            <p className="text-sm text-muted-foreground">
               © 2024 PXL Energy AB, 556813-1436
             </p>
-            <p className="text-gray-500 text-xs mt-1">This is your power-up!</p>
+            <p className="mt-1 text-xs text-muted-foreground/80">
+              This is your power-up!
+            </p>
           </div>
           <div className="flex items-center gap-4">
             <a
               href="https://www.instagram.com/pxlpowerup"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-[#f5db00] transition-colors"
+              className="text-muted-foreground transition-colors hover:text-pxl-yellow"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
@@ -377,24 +427,13 @@ export default function Home() {
               href="https://pxlpowerup.se"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-[#f5db00] transition-colors text-sm"
+              className="text-sm text-muted-foreground transition-colors hover:text-pxl-yellow"
             >
               pxlpowerup.se
             </a>
           </div>
         </div>
       </footer>
-
-      {/* Scroll to top button */}
-      {showScrollTop && (
-        <Button
-          className="fixed bottom-24 right-4 lg:hidden h-10 w-10 rounded-full bg-[#f5db00] text-black hover:bg-[#f5db00]/90 shadow-lg"
-          size="icon"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        >
-          <ChevronDown className="w-5 h-5 rotate-180" />
-        </Button>
-      )}
     </div>
   )
 }
