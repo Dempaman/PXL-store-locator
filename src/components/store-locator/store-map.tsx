@@ -20,15 +20,40 @@ interface StoreMapProps {
   onStoreSelect: (storeId: string) => void
 }
 
+const MAP_DARK_COLORS = {
+  base: "#1f252d",
+  textStroke: "#1f252d",
+  textFill: "#8d98a8",
+  stroke: "#313844",
+  park: "#23352a",
+  road: "#2a313a",
+  roadHighway: "#353d47",
+  transit: "#252d36",
+  water: "#1b3645",
+  waterText: "#6b7a8a",
+} as const
+
+const MAP_MARKER_COLORS = {
+  fill: "#f0cb24",
+  stroke: "#2b2210",
+  strokeMuted: "#4b5563",
+} as const
+
 // Map styles for dark theme
 const darkMapStyles: google.maps.MapTypeStyle[] = [
-  { elementType: "geometry", stylers: [{ color: "#1a1a1a" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#1a1a1a" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#8a8a8a" }] },
+  { elementType: "geometry", stylers: [{ color: MAP_DARK_COLORS.base }] },
+  {
+    elementType: "labels.text.stroke",
+    stylers: [{ color: MAP_DARK_COLORS.textStroke }],
+  },
+  {
+    elementType: "labels.text.fill",
+    stylers: [{ color: MAP_DARK_COLORS.textFill }],
+  },
   {
     featureType: "administrative",
     elementType: "geometry.stroke",
-    stylers: [{ color: "#333333" }],
+    stylers: [{ color: MAP_DARK_COLORS.stroke }],
   },
   {
     featureType: "administrative.land_parcel",
@@ -41,47 +66,47 @@ const darkMapStyles: google.maps.MapTypeStyle[] = [
   {
     featureType: "poi",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#757575" }],
+    stylers: [{ color: MAP_DARK_COLORS.textFill }],
   },
   {
     featureType: "poi.park",
     elementType: "geometry.fill",
-    stylers: [{ color: "#2d3a2d" }],
+    stylers: [{ color: MAP_DARK_COLORS.park }],
   },
   {
     featureType: "road",
     elementType: "geometry",
-    stylers: [{ color: "#2c2c2c" }],
+    stylers: [{ color: MAP_DARK_COLORS.road }],
   },
   {
     featureType: "road",
     elementType: "geometry.stroke",
-    stylers: [{ color: "#1a1a1a" }],
+    stylers: [{ color: MAP_DARK_COLORS.textStroke }],
   },
   {
     featureType: "road.highway",
     elementType: "geometry",
-    stylers: [{ color: "#3a3a3a" }],
+    stylers: [{ color: MAP_DARK_COLORS.roadHighway }],
   },
   {
     featureType: "road.highway",
     elementType: "geometry.stroke",
-    stylers: [{ color: "#1a1a1a" }],
+    stylers: [{ color: MAP_DARK_COLORS.textStroke }],
   },
   {
     featureType: "transit",
     elementType: "geometry",
-    stylers: [{ color: "#2a2a2a" }],
+    stylers: [{ color: MAP_DARK_COLORS.transit }],
   },
   {
     featureType: "water",
     elementType: "geometry",
-    stylers: [{ color: "#1e3a4a" }],
+    stylers: [{ color: MAP_DARK_COLORS.water }],
   },
   {
     featureType: "water",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#5e5e5e" }],
+    stylers: [{ color: MAP_DARK_COLORS.waterText }],
   },
 ]
 
@@ -90,9 +115,11 @@ const lightMapStyles: google.maps.MapTypeStyle[] = []
 // Custom yellow marker
 const createCustomMarkerIcon = (isSelected: boolean) => ({
   path: google.maps.SymbolPath.CIRCLE,
-  fillColor: "#f5db00",
+  fillColor: MAP_MARKER_COLORS.fill,
   fillOpacity: isSelected ? 1 : 0.9,
-  strokeColor: isSelected ? "#000" : "#333",
+  strokeColor: isSelected
+    ? MAP_MARKER_COLORS.stroke
+    : MAP_MARKER_COLORS.strokeMuted,
   strokeWeight: isSelected ? 3 : 2,
   scale: isSelected ? 12 : 10,
 })
@@ -477,18 +504,14 @@ export function StoreMap({
       {isLoaded && selectedStore && overlayPosition && (
         <div className="pointer-events-none absolute inset-0 z-20">
           <div
-            className={`pointer-events-auto absolute w-75 rounded-md border shadow-xl transition-all duration-200 animate-in fade-in zoom-in-95 slide-in-from-bottom-2 ${
-              isDarkTheme
-                ? "border-pxl-yellow/25 bg-[#090909]/95 text-white"
-                : "border-slate-200/95 bg-[#fffdf5]/95 text-slate-900"
-            }`}
+            className="pointer-events-auto absolute w-75 rounded-md border border-border/90 bg-background/95 text-foreground shadow-xl backdrop-blur-sm transition-all duration-200 animate-in fade-in zoom-in-95 slide-in-from-bottom-2"
             style={{ left: overlayPosition.left, top: overlayPosition.top }}
           >
-            <div className="h-1 rounded-t-md bg-linear-to-r from-pxl-yellow/90 via-pxl-yellow/35 to-transparent" />
+            <div className="h-1 rounded-t-md bg-linear-to-r from-primary/90 via-primary/35 to-transparent" />
             <div className="space-y-3 p-3.5">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-pxl-yellow">
+                  <p className="store-locator-accent-text text-[10px] font-extrabold uppercase tracking-[0.16em]">
                     Power up point
                   </p>
                   <h3 className="truncate text-base font-black leading-tight">
@@ -506,13 +529,11 @@ export function StoreMap({
                 </Button>
               </div>
 
-              <div className="inline-flex max-w-full truncate rounded-full border border-pxl-yellow/30 bg-pxl-yellow/12 px-2.5 py-1 text-[11px] font-semibold text-pxl-yellow">
+              <div className="store-locator-accent-badge inline-flex max-w-full truncate rounded-full border px-2.5 py-1 text-[11px] font-semibold dark:bg-primary/15">
                 {selectedStore.storeType}
               </div>
 
-              <div
-                className={`space-y-1.5 text-xs ${isDarkTheme ? "text-slate-300" : "text-slate-700"}`}
-              >
+              <div className="space-y-1.5 text-xs text-muted-foreground">
                 <p>
                   {selectedStore.address}, {selectedStore.postalCode}{" "}
                   {selectedStore.city}
@@ -523,12 +544,8 @@ export function StoreMap({
                 )}
               </div>
 
-              <div
-                className={`flex items-center justify-between gap-2 border-t pt-2.5 ${isDarkTheme ? "border-slate-700/70" : "border-slate-300/80"}`}
-              >
-                <span
-                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${isDarkTheme ? "bg-slate-800 text-slate-300" : "bg-slate-200 text-slate-700"}`}
-                >
+              <div className="flex items-center justify-between gap-2 border-t border-border/80 pt-2.5">
+                <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
                   {selectedStore.region}
                 </span>
 
@@ -536,7 +553,7 @@ export function StoreMap({
                   href={`https://www.google.com/maps/search/?api=1&query=${selectedStore.latitude},${selectedStore.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-full bg-pxl-yellow px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-black transition hover:brightness-95"
+                  className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-primary-foreground transition hover:brightness-95"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   Open map
@@ -549,27 +566,13 @@ export function StoreMap({
               style={{ left: overlayPosition.pointerLeft }}
             >
               <div className="relative -translate-x-1/2">
-                <div
-                  className={`mx-auto h-3 w-px ${
-                    isDarkTheme ? "bg-pxl-yellow/70" : "bg-amber-500/70"
-                  }`}
-                />
-                <div
-                  className={`mx-auto h-2 w-2 rounded-full ring-1 ${
-                    isDarkTheme
-                      ? "bg-pxl-yellow ring-pxl-yellow/70"
-                      : "bg-amber-500 ring-amber-600/60"
-                  }`}
-                />
+                <div className="mx-auto h-3 w-px bg-primary/70" />
+                <div className="mx-auto h-2 w-2 rounded-full bg-primary ring-1 ring-primary/70" />
               </div>
             </div>
 
             <div
-              className={`pointer-events-none absolute -bottom-2 h-4 w-4 rotate-45 border-r border-b ${
-                isDarkTheme
-                  ? "border-pxl-yellow/25 bg-[#090909]/95"
-                  : "border-slate-200/95 bg-[#fffdf5]/95"
-              }`}
+              className="pointer-events-none absolute -bottom-2 h-4 w-4 rotate-45 border-r border-b border-border/90 bg-background/95"
               style={{ left: `calc(${overlayPosition.pointerLeft}px - 8px)` }}
             />
           </div>
@@ -581,7 +584,7 @@ export function StoreMap({
           <Button
             size="icon"
             variant="outline"
-            className="h-8 w-8 rounded-md border-border bg-background/90 text-foreground shadow-none backdrop-blur-sm hover:border-pxl-yellow hover:text-pxl-yellow dark:bg-card/90"
+            className="store-locator-control-surface-blur h-8 w-8 rounded-md hover:border-primary/50 hover:text-primary-foreground dark:hover:text-primary"
             onClick={handleZoomIn}
             title="Zooma in"
           >
@@ -590,7 +593,7 @@ export function StoreMap({
           <Button
             size="icon"
             variant="outline"
-            className="h-8 w-8 rounded-md border-border bg-background/90 text-foreground shadow-none backdrop-blur-sm hover:border-pxl-yellow hover:text-pxl-yellow dark:bg-card/90"
+            className="store-locator-control-surface-blur h-8 w-8 rounded-md hover:border-primary/50 hover:text-primary-foreground dark:hover:text-primary"
             onClick={handleZoomOut}
             title="Zooma ut"
           >
@@ -600,7 +603,7 @@ export function StoreMap({
           <Button
             size="icon"
             variant="outline"
-            className="h-8 w-8 rounded-md border-pxl-yellow/40 bg-background/90 text-pxl-yellow shadow-none backdrop-blur-sm hover:bg-pxl-yellow hover:text-black dark:bg-card/90"
+            className="store-locator-control-surface-blur h-8 w-8 rounded-md border-primary/40 text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground dark:bg-card/90"
             onClick={handleCenterSweden}
             title="Centrera på Sverige"
           >

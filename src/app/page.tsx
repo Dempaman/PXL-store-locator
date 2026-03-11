@@ -269,7 +269,7 @@ export default function Home() {
           size="sm"
           onClick={getUserLocation}
           disabled={isLocating}
-          className="h-9 flex-1 rounded-md border-border bg-background/70 text-foreground shadow-none hover:border-pxl-yellow hover:bg-pxl-yellow/10 dark:bg-card/70"
+          className="store-locator-control-surface store-locator-accent-hover h-9 flex-1 rounded-md"
         >
           {isLocating ? (
             <>
@@ -288,7 +288,7 @@ export default function Home() {
           size="sm"
           onClick={refreshStores}
           disabled={isLoadingStores}
-          className="h-9 rounded-md border-border bg-background/70 text-foreground shadow-none hover:border-pxl-yellow hover:bg-pxl-yellow/10 dark:bg-card/70"
+          className="store-locator-control-surface store-locator-accent-hover h-9 rounded-md"
         >
           <RefreshCw
             className={`w-4 h-4 ${isLoadingStores ? "animate-spin" : ""}`}
@@ -308,13 +308,13 @@ export default function Home() {
       </div>
 
       {locationError && (
-        <p className="rounded-md bg-red-500/12 px-3 py-2 text-xs text-red-700 dark:text-red-400">
+        <p className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive">
           {locationError}
         </p>
       )}
 
       {storesLoadError && (
-        <p className="rounded-md bg-amber-500/12 px-3 py-2 text-xs text-amber-800 dark:text-amber-300">
+        <p className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive">
           {storesLoadError}
         </p>
       )}
@@ -332,7 +332,7 @@ export default function Home() {
       <main className="flex-1 min-h-0 flex overflow-hidden">
         {/* Left Panel - Search, Filters, Store List */}
         <div className="hidden min-h-0 flex-col border-r border-border bg-card/95 lg:flex lg:w-105 xl:w-120">
-          <div className="h-0.5 shrink-0 bg-linear-to-r from-pxl-yellow/80 via-pxl-yellow/20 to-transparent" />
+          <div className="h-0.5 shrink-0 bg-linear-to-r from-primary/80 via-primary/20 to-transparent" />
           <div className="shrink-0 space-y-4 border-b border-border/80 p-4">
             {controlsBlock}
           </div>
@@ -365,12 +365,12 @@ export default function Home() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-9 rounded-md border-border bg-background/90 text-foreground shadow-none backdrop-blur hover:border-pxl-yellow hover:bg-pxl-yellow/10 dark:bg-card/90"
+                  className="store-locator-control-surface-blur store-locator-accent-hover h-9 rounded-md"
                 >
-                  <SlidersHorizontal className="w-4 h-4 mr-2 text-pxl-yellow" />
+                  <SlidersHorizontal className="text-muted-foreground w-4 h-4 mr-2" />
                   Filter och lista
                   {activeFilterCount > 0 && (
-                    <span className="ml-1.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-pxl-yellow px-1 text-[10px] leading-none font-black text-black">
+                    <span className="ml-1.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-black text-primary-foreground">
                       {activeFilterCount}
                     </span>
                   )}
@@ -417,7 +417,7 @@ export default function Home() {
               href="https://www.instagram.com/pxlpowerup"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground transition-colors hover:text-pxl-yellow"
+              className="text-muted-foreground transition-colors hover:text-primary-foreground dark:hover:text-primary"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
@@ -427,7 +427,7 @@ export default function Home() {
               href="https://pxlpowerup.se"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-muted-foreground transition-colors hover:text-pxl-yellow"
+              className="text-sm text-muted-foreground transition-colors hover:text-primary-foreground dark:hover:text-primary"
             >
               pxlpowerup.se
             </a>

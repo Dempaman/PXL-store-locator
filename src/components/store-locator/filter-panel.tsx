@@ -28,7 +28,7 @@ export function FilterPanel({
       {/* Region Filter */}
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1.5">
-          <MapPin className="w-3.5 h-3.5 text-pxl-yellow" />
+          <MapPin className="text-muted-foreground w-3.5 h-3.5" />
           <span className="text-xs font-medium text-muted-foreground">
             Region
           </span>
@@ -39,7 +39,7 @@ export function FilterPanel({
             onFilterChange({ region: value as Region | "all" })
           }
         >
-          <SelectTrigger className="h-10 rounded-md border-border bg-background/70 text-foreground shadow-none focus:border-pxl-yellow focus:ring-pxl-yellow/20 dark:bg-card/70">
+          <SelectTrigger className="store-locator-control-surface store-locator-focus-accent-select h-10 rounded-md">
             <SelectValue placeholder="Alla regioner" />
           </SelectTrigger>
           <SelectContent className="rounded-md border-border bg-popover text-popover-foreground">
@@ -65,7 +65,7 @@ export function FilterPanel({
       {/* Store Type Filter */}
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1.5">
-          <Store className="w-3.5 h-3.5 text-pxl-yellow" />
+          <Store className="text-muted-foreground w-3.5 h-3.5" />
           <span className="text-xs font-medium text-muted-foreground">
             Butikstyp
           </span>
@@ -76,7 +76,7 @@ export function FilterPanel({
             onFilterChange({ storeType: value as StoreType | "all" })
           }
         >
-          <SelectTrigger className="h-10 rounded-md border-border bg-background/70 text-foreground shadow-none focus:border-pxl-yellow focus:ring-pxl-yellow/20 dark:bg-card/70">
+          <SelectTrigger className="store-locator-control-surface store-locator-focus-accent-select h-10 rounded-md">
             <SelectValue placeholder="Alla typer" />
           </SelectTrigger>
           <SelectContent className="max-h-75 rounded-md border-border bg-popover text-popover-foreground">
@@ -102,7 +102,7 @@ export function FilterPanel({
       {/* Sort */}
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1.5">
-          <ArrowUpDown className="w-3.5 h-3.5 text-pxl-yellow" />
+          <ArrowUpDown className="text-muted-foreground w-3.5 h-3.5" />
           <span className="text-xs font-medium text-muted-foreground">
             Sortera efter
           </span>
@@ -113,7 +113,7 @@ export function FilterPanel({
             onFilterChange({ sortBy: value as "name" | "city" | "distance" })
           }
         >
-          <SelectTrigger className="h-10 rounded-md border-border bg-background/70 text-foreground shadow-none focus:border-pxl-yellow focus:ring-pxl-yellow/20 dark:bg-card/70">
+          <SelectTrigger className="store-locator-control-surface store-locator-focus-accent-select h-10 rounded-md">
             <SelectValue placeholder="Sortera efter" />
           </SelectTrigger>
           <SelectContent className="rounded-md border-border bg-popover text-popover-foreground">

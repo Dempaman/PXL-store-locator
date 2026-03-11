@@ -22,8 +22,7 @@ const storeTypeColors: Record<string, string> = {
     "border-blue-500/25 bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300",
   Kiosk:
     "border-green-500/25 bg-green-500/10 text-green-700 dark:bg-green-500/20 dark:text-green-300",
-  "Gaming Cafe":
-    "border-pxl-yellow/30 bg-pxl-yellow/15 text-yellow-800 dark:text-pxl-yellow",
+  "Gaming Cafe": "store-locator-accent-badge dark:bg-primary/15",
   Pressbyrån:
     "border-orange-500/25 bg-orange-500/10 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300",
   "7-Eleven":
@@ -38,7 +37,7 @@ const storeTypeColors: Record<string, string> = {
     "border-green-500/25 bg-green-500/10 text-green-700 dark:bg-green-500/20 dark:text-green-300",
   Netto:
     "border-red-500/25 bg-red-500/10 text-red-700 dark:bg-red-500/20 dark:text-red-300",
-  Lidl: "border-yellow-500/25 bg-yellow-500/10 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300",
+  Lidl: "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300",
   Åhléns:
     "border-violet-500/25 bg-violet-500/10 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300",
   Elgiganten:
@@ -91,8 +90,8 @@ export function StoreCard({
     <Card
       className={`cursor-pointer transition-all duration-200 ${
         isSelected
-          ? "rounded-md border-pxl-yellow bg-pxl-yellow/10 ring-1 ring-pxl-yellow/30"
-          : "rounded-md border-border bg-card/90 hover:border-pxl-yellow/40 hover:bg-accent/50"
+          ? "store-locator-selected-surface"
+          : "rounded-md border-border bg-card/90 hover:border-primary/40 hover:bg-accent/50"
       }`}
       onClick={onClick}
     >
@@ -115,7 +114,7 @@ export function StoreCard({
             </Badge>
           </div>
           {distance !== null && (
-            <div className="flex items-center gap-1 text-sm font-medium text-pxl-yellow">
+            <div className="text-muted-foreground flex items-center gap-1 text-sm font-medium">
               <Navigation className="w-3.5 h-3.5" />
               <span>{distance.toFixed(1)} km</span>
             </div>
@@ -155,7 +154,7 @@ export function StoreCard({
           <Button
             variant="ghost"
             size="sm"
-            className="ml-auto h-7 rounded-sm px-2 text-pxl-yellow hover:bg-pxl-yellow/10 hover:text-pxl-yellow"
+            className="text-muted-foreground ml-auto h-7 rounded-sm px-2 hover:bg-accent hover:text-foreground"
             onClick={(e) => {
               e.stopPropagation()
               window.open(googleMapsUrl, "_blank")

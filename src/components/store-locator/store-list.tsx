@@ -37,7 +37,7 @@ export function StoreList({
     <div className="flex flex-col h-full">
       {/* Results count */}
       <div className="flex items-center gap-2 border-b border-border px-1 py-3">
-        <MapPin className="h-4 w-4 text-pxl-yellow" />
+        <MapPin className="text-muted-foreground h-4 w-4" />
         <span className="text-sm text-muted-foreground">
           <span className="font-semibold text-foreground">{stores.length}</span>{" "}
           butiker hittades

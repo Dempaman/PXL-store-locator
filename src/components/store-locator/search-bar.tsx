@@ -18,7 +18,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
         placeholder="Sök butik, stad eller adress..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-10 rounded-md border-border bg-background/70 pl-10 pr-10 text-foreground shadow-none placeholder:text-muted-foreground focus-visible:border-pxl-yellow focus-visible:ring-pxl-yellow/20 dark:bg-card/70"
+        className="store-locator-control-surface store-locator-focus-accent h-10 rounded-md pl-10 pr-10 placeholder:text-muted-foreground"
       />
       {value && (
         <Button
