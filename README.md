@@ -45,7 +45,8 @@ The API route `src/app/api/stores/route.ts` calls `fetchStoresFromKml()` from `s
 - Default KML source:
   - `https://www.google.com/maps/d/kml?mid=1gEpdbhTyIMNYDUCbOuFPqPevXZcIjZs`
 - Revalidation/cache interval:
-  - `1800` seconds (30 minutes)
+  <!-- - `1800` seconds (30 minutes) -->
+  - `0` seconds (0 minutes)
 
 This means updates in Google My Maps are reflected here after cache revalidation, not always instantly.
 

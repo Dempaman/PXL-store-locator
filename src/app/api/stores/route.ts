@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { fetchStoresFromKml } from "@/lib/store-kml"
 
-export const revalidate = 1800
+export const revalidate = 0
 
 export async function GET() {
   try {

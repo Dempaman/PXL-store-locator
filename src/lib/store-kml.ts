@@ -206,7 +206,7 @@ async function fetchText(url: string): Promise<string> {
       "User-Agent": "pxl-store-locator/1.0",
     },
     next: {
-      revalidate: 1800,
+      revalidate: 0,
     },
   })
 
